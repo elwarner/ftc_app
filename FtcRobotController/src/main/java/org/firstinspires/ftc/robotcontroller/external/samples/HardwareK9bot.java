@@ -30,14 +30,15 @@ public class HardwareK9bot
     public DcMotor  rightMotor  = null;
     public Servo    armA         = null;
     public Servo    armB         = null;
-    //public Servo    claw        = null;
+    public Servo    arm          = null;
+    public Servo    claw        = null;
 
     public final static double ARM_HOME = 0.2;
-    //public final static double CLAW_HOME = 0.2;
+    public final static double CLAW_HOME = 0.2;
     public final static double ARM_MIN_RANGE  = 0.20;
     public final static double ARM_MAX_RANGE  = 0.90;
-    //public final static double CLAW_MIN_RANGE  = 0.20;
-    //public final static double CLAW_MAX_RANGE  = 0.7;
+    public final static double CLAW_MIN_RANGE  = 0.20;
+    public final static double CLAW_MAX_RANGE  = 0.7;
 
     /* Local OpMode members. */
     HardwareMap hwMap  = null;
@@ -69,10 +70,12 @@ public class HardwareK9bot
         // Define and initialize ALL installed servos.
         armA = hwMap.servo.get("armA");
         armB = hwMap.servo.get("armB");
-        //claw = hwMap.servo.get("claw");
+        arm = hwMap.servo.get("arm");
+        claw = hwMap.servo.get("claw");
+        arm.setPosition(ARM_HOME);
         armA.setPosition(ARM_HOME);
         armB.setPosition(ARM_HOME);
-        //claw.setPosition(CLAW_HOME);
+        claw.setPosition(CLAW_HOME);
     }
 
     /***
