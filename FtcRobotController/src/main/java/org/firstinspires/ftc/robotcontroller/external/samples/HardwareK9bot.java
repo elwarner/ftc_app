@@ -28,9 +28,9 @@ public class HardwareK9bot
     /* Public OpMode members. */
     public DcMotor  leftMotor   = null;
     public DcMotor  rightMotor  = null;
-    public Servo    armA         = null;
-    public Servo    armB         = null;
-    public Servo    arm          = null;
+    public Servo    clawA         = null;
+    public Servo    clawB         = null;
+    public DcMotor    arm          = null;
     public Servo    claw        = null;
 
     public final static double ARM_HOME = 0.2;
@@ -61,20 +61,20 @@ public class HardwareK9bot
         // Set all motors to zero power
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-
+        arm.setPower(0);
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Define and initialize ALL installed servos.
-        armA = hwMap.servo.get("armA");
-        armB = hwMap.servo.get("armB");
-        arm = hwMap.servo.get("arm");
+        clawA = hwMap.servo.get("left_hand");
+        clawB = hwMap.servo.get("right_hand");
+        arm = hwMap.dcMotor.get("arm");
         claw = hwMap.servo.get("claw");
-        arm.setPosition(ARM_HOME);
-        armA.setPosition(ARM_HOME);
-        armB.setPosition(ARM_HOME);
+        //arm.setPosition(ARM_HOME);
+        clawA.setPosition(CLAW_HOME);
+        clawB.setPosition(CLAW_HOME);
         claw.setPosition(CLAW_HOME);
     }
 

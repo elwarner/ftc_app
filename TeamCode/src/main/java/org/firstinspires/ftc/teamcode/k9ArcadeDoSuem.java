@@ -62,9 +62,9 @@ public class k9ArcadeDoSuem extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareK9bot   robot           = new HardwareK9bot();              // Use a K9'shardware
-    double          armPosition     = robot.ARM_HOME;                   // Servo safe position
-    //double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
-    //final double    CLAW_SPEED      = 0.01 ;                            // sets rate to move servo
+    //double          armPosition     = robot.ARM_HOME;                   // Servo safe position
+    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
+    final double    CLAW_SPEED      = 0.01 ;                            // sets rate to move servo
     final double    ARM_SPEED       = 0.01 ;                            // sets rate to move servo
 
     @Override
@@ -92,6 +92,17 @@ public class k9ArcadeDoSuem extends LinearOpMode {
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
             moveValue = -gamepad1.left_stick_y;
             rotateValue = gamepad1.right_stick_x;
+            if(moveValue > 1) {
+                moveValue = 1;
+            } else if(moveValue < -1) {
+                moveValue = -1;
+            }
+            if(rotateValue > 1) {
+                rotateValue = 1;
+            } else if(moveValue < -1) {
+                rotateValue = -1;
+            }
+
             //Arcade Drive SQUARED_INPUTS = TRUE
             if (true) {
                 // square the inputs (while preserving the sign) to increase fine control
@@ -128,23 +139,35 @@ public class k9ArcadeDoSuem extends LinearOpMode {
             robot.leftMotor.setPower(leftMotorOutput);
             robot.rightMotor.setPower(rightMotorOutput);
 
+
             // Use gamepad Y & A raise and lower the arm
             if (gamepad1.a)
-                armPosition += ARM_SPEED;
+
+                clawPosition += CLAW_SPEED;
             else if (gamepad1.y)
-                armPosition -= ARM_SPEED;
+                clawPosition -= CLAW_SPEED;
 
             // Move both servos to new position.
-            armPosition  = Range.clip(armPosition, robot.ARM_MIN_RANGE, robot.ARM_MAX_RANGE);
-            robot.armA.setPosition(armPosition);
-            robot.armB.setPosition(armPosition);
+            if(-clawPosition >= -0.5 && clawPosition <= 0.5) {
+                robot.clawA.setPosition(-clawPosition);
+                robot.clawB.setPosition(clawPosition);
+            }
 
-
+            //
+            if(gamepad1.dpad_down) {
+                robot.arm.setPower(0.2);
+            } else if(gamepad1.dpad_up) {
+                robot.arm.setPower(-0.2);
+            } else {
+                robot.arm.setPower(0);
+            }
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("arm",   "%.2f", armPosition);
+            //telemetry.addData("arm",   "%.2f", armPosition);
             telemetry.addData("left",  "%.2f", leftMotorOutput);
             telemetry.addData("right", "%.2f", rightMotorOutput);
+            telemetry.addData("leftClaw", "%.2f",  -clawPosition);
+            telemetry.addData("righttClaw", "%.2f",  clawPosition);
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
