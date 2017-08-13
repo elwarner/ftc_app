@@ -88,7 +88,7 @@ public class k9ArcadeDoSuem extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            //Arcade START
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
             moveValue = -gamepad1.left_stick_y;
             rotateValue = gamepad1.right_stick_x;
@@ -138,9 +138,9 @@ public class k9ArcadeDoSuem extends LinearOpMode {
             }
             robot.leftMotor.setPower(leftMotorOutput);
             robot.rightMotor.setPower(rightMotorOutput);
+            //ARCADE STOP
 
-
-            // Use gamepad Y & A raise and lower the arm
+            // Use gamepad to control the claw
             if (gamepad1.a)
 
                 clawPosition += CLAW_SPEED;
@@ -153,7 +153,7 @@ public class k9ArcadeDoSuem extends LinearOpMode {
                 robot.clawB.setPosition(clawPosition);
             }
 
-            //
+            //USING dpad for arm
             if(gamepad1.dpad_down) {
                 robot.arm.setPower(0.2);
             } else if(gamepad1.dpad_up) {
