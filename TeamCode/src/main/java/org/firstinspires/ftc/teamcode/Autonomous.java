@@ -58,42 +58,58 @@ public class Autonomous extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-    DcMotor leftMotor = null;
-    DcMotor rightMotor = null;
-
+    DcMotor frontLeftMotor = null;
+    DcMotor frontRightMotor = null;
+    DcMotor backLeftMotor = null;
+    DcMotor backRightMotor = null;
 
     void driveForward(double power) {
-        leftMotor.setPower(power);
-        rightMotor.setPower(power);
+        frontLeftMotor.setPower(power);
+        frontRightMotor.setPower(power);
+        backLeftMotor.setPower(power);
+        backRightMotor.setPower(power);
     }
 
     void stopDriving() {
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
     }
     //distance and diameter in inches
     void driveDistance(double power, double diameter, double distance) {
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // rotations = (distance/circumference)
         int total_ticks = (int) Math.round(distance / (diameter*Math.PI) * TICKS_PER_ROTATION);
 
-        leftMotor.setTargetPosition(total_ticks);
-        rightMotor.setTargetPosition(total_ticks);
+        frontLeftMotor.setTargetPosition(total_ticks);
+        backLeftMotor.setTargetPosition(total_ticks);
 
-        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightMotor.setTargetPosition(total_ticks);
+        backRightMotor.setTargetPosition(total_ticks);
+
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         driveForward(power);
 
-        while(leftMotor.isBusy() && rightMotor.isBusy()) {
+        while(frontLeftMotor.isBusy() && frontRightMotor.isBusy() && backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
         }
 
         stopDriving();
-        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
@@ -102,8 +118,11 @@ public class Autonomous extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftMotor = hardwareMap.dcMotor.get("Left_Motor");
-        rightMotor = hardwareMap.dcMotor.get("Right_Motor");
+        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+
+        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
 
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -114,11 +133,14 @@ public class Autonomous extends LinearOpMode {
 
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
-        leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        //leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        //rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         // Wait for the game to start (driver presses PLAY)
