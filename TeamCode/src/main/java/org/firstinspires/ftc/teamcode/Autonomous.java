@@ -77,7 +77,7 @@ public class Autonomous extends LinearOpMode {
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // rotations = (distance/circumference)
-        int total_ticks = (distance / (diameter*Math.PI) * TICKS_PER_ROTATION);
+        int total_ticks = (int) Math.round(distance / (diameter*Math.PI) * TICKS_PER_ROTATION);
 
         leftMotor.setTargetPosition(total_ticks);
         rightMotor.setTargetPosition(total_ticks);
