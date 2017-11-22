@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Forward&Backward", group="Routines")  // @Autonomous(...) is the other common choice
 @Disabled
 public class Autonomous extends LinearOpMode {
-    int TICKS_PER_ROTATION = 1680;
+    int TICKS_PER_ROTATION = 280;
     double TICKS_PER_DEGREE = 0;
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
