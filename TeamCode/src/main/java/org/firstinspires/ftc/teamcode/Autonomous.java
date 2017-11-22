@@ -54,40 +54,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Forward&Backward", group="Routines")  // @Autonomous(...) is the other common choice
 //@Disabled
-public class Autoonomous extends LinearOpMode {
+public class Autonomous extends LinearOpMode {
     int TICKS_PER_ROTATION = 1120;
     double TICKS_PER_DEGREE = 0;
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-
     DcMotor frontLeftMotor = null;
     DcMotor frontRightMotor = null;
     DcMotor backLeftMotor = null;
     DcMotor backRightMotor = null;
-
-    void driveForward(double power) {
-        frontLeftMotor.setPower(power);
-        frontRightMotor.setPower(power);
-        backLeftMotor.setPower(power);
-        backRightMotor.setPower(power);
-    }
-
-    void rightPower(double power) {
-        frontRightMotor.setPower(power);
-        backRightMotor.setPower(power);
-    }
-    void leftPower(double power) {
-        frontLeftMotor.setPower(power);
-        backLeftMotor.setPower(power);
-    }
+    HumanControl humanControl = new HumanControl(gamepad1, gamepad2);
+    DriveController driveController;
 
 
-    void stopDriving() {
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-    }
+
 
     void ratioCheck(int test_ticks, double power) {
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,14 +80,14 @@ public class Autoonomous extends LinearOpMode {
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //turn right
-        leftPower(power);
-        rightPower(-power);
+        driveController.leftPower(power);
+        driveController.rightPower(-power);
 
         while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
         }
 
-        stopDriving();
+        driveController.stopDriving();
 
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -124,84 +104,6 @@ public class Autoonomous extends LinearOpMode {
 
     }
 
-    //distance and diameter in inches
-    void driveDistance(double power, double diameter, double distance) {
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // rotations = (distance/circumference)
-        int total_ticks = (int) Math.round((distance / (diameter*Math.PI) * TICKS_PER_ROTATION));
-        telemetry.addData("ticks_forward", total_ticks);
-        telemetry.update();
-        //Fixing andymark tolerance 89%
-        total_ticks = (int)Math.round(total_ticks * 0.89);
-        backLeftMotor.setTargetPosition(total_ticks);
-        backRightMotor.setTargetPosition(total_ticks);
-
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        driveForward(power);
-
-        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
-
-        }
-
-        stopDriving();
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    void turnRight(double power, double degrees) {
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        int ticks = (int) Math.round(TICKS_PER_DEGREE * degrees);
-
-        //Turn to the right
-        backLeftMotor.setTargetPosition(ticks);
-        backRightMotor.setTargetPosition(ticks);
-
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //turn right
-        leftPower(power);
-        rightPower(-power);
-        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
-
-        }
-
-        stopDriving();
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    void turnLeft(double power, double degrees) {
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        int ticks = (int) Math.round(TICKS_PER_DEGREE * degrees);
-
-        //Turn to the right
-        frontRightMotor.setTargetPosition(ticks);
-        backRightMotor.setTargetPosition(ticks);
-
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //turn right
-        leftPower(-power);
-        rightPower(power);
-
-        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
-
-        }
-
-        stopDriving();
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -212,7 +114,7 @@ public class Autoonomous extends LinearOpMode {
 
         backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-
+        driveController = new DriveController(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor, humanControl);
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
@@ -225,11 +127,7 @@ public class Autoonomous extends LinearOpMode {
         //leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         //rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
 
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -239,7 +137,7 @@ public class Autoonomous extends LinearOpMode {
         waitForStart();
         runtime.reset();
         //drive 5 inches
-        //driveDistance(1.0, 4, 60);
+        driveController.driveDistance(1.0, 4, 60);
         //sleep(5000);
         ratioCheck(2000, 0.5);
 

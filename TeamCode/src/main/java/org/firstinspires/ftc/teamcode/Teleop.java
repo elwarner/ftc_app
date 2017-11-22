@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -58,8 +60,23 @@ public class Teleop extends OpMode
 {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftMotor = null;
-    private DcMotor rightMotor = null;
+
+    DcMotor frontLeftMotor = null;
+    DcMotor frontRightMotor = null;
+    DcMotor backLeftMotor = null;
+    DcMotor backRightMotor = null;
+
+    DcMotor armLeftMotor = null;
+    DcMotor armRightMotor = null;
+
+    Servo leftServo = null;
+    Servo rightServo = null;
+
+    HumanControl humanControl;
+    DriveController driveController;
+    ArmController armController;
+    ClampController clampController;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -68,6 +85,22 @@ public class Teleop extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
+        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+
+        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+
+        armLeftMotor = hardwareMap.dcMotor.get("armLeftMotor");
+        armRightMotor = hardwareMap.dcMotor.get("armRightMotor");
+
+        leftServo = hardwareMap.servo.get("leftServo");
+        rightServo = hardwareMap.servo.get("rightServo");
+
+        humanControl = new HumanControl(gamepad1, gamepad2);
+        driveController = new DriveController(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor, humanControl);
+        armController = new ArmController(armLeftMotor, armRightMotor, humanControl);
+        clampController = new ClampController(leftServo, rightServo,humanControl);
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
@@ -102,7 +135,9 @@ public class Teleop extends OpMode
      */
     @Override
     public void loop() {
-
+        driveController.update();
+        armController.update();
+        clampController.update();
         // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
         // leftMotor.setPower(-gamepad1.left_stick_y);
         // rightMotor.setPower(-gamepad1.right_stick_y);
