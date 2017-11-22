@@ -273,7 +273,7 @@ public class Autonomous extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
+        ratioCheck(300, 0.5);
         //drive 5 inches
         driveDistance(1.0, 4, 5);
     }
