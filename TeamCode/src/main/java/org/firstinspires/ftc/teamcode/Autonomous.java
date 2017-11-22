@@ -53,9 +53,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Forward&Backward", group="Routines")  // @Autonomous(...) is the other common choice
-@Disabled
-public class Autonomous extends LinearOpMode {
-    int TICKS_PER_ROTATION = 280;
+//@Disabled
+public class Autoonomous extends LinearOpMode {
+    int TICKS_PER_ROTATION = 1120;
     double TICKS_PER_DEGREE = 0;
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -73,16 +73,12 @@ public class Autonomous extends LinearOpMode {
     }
 
     void rightPower(double power) {
-        frontLeftMotor.setPower(power);
         frontRightMotor.setPower(power);
-        backLeftMotor.setPower(power);
         backRightMotor.setPower(power);
     }
     void leftPower(double power) {
         frontLeftMotor.setPower(power);
-        frontRightMotor.setPower(power);
         backLeftMotor.setPower(power);
-        backRightMotor.setPower(power);
     }
 
 
@@ -94,34 +90,26 @@ public class Autonomous extends LinearOpMode {
     }
 
     void ratioCheck(int test_ticks, double power) {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeftMotor.setTargetPosition(test_ticks);
         backLeftMotor.setTargetPosition(test_ticks);
-        frontRightMotor.setTargetPosition(test_ticks);
         backRightMotor.setTargetPosition(test_ticks);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //turn right
         leftPower(power);
         rightPower(-power);
 
-        while(frontLeftMotor.isBusy() && frontRightMotor.isBusy() && backLeftMotor.isBusy() && backRightMotor.isBusy()) {
+        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
         }
 
         stopDriving();
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Might use above ^ code in a function because I use it a lot
         //                |
@@ -138,105 +126,78 @@ public class Autonomous extends LinearOpMode {
 
     //distance and diameter in inches
     void driveDistance(double power, double diameter, double distance) {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // rotations = (distance/circumference)
-        int total_ticks = (int) Math.round(distance / (diameter*Math.PI) * TICKS_PER_ROTATION);
-
-        frontLeftMotor.setTargetPosition(total_ticks);
+        int total_ticks = (int) Math.round((distance / (diameter*Math.PI) * TICKS_PER_ROTATION));
+        telemetry.addData("ticks_forward", total_ticks);
+        telemetry.update();
+        //Fixing andymark tolerance 89%
+        total_ticks = (int)Math.round(total_ticks * 0.89);
         backLeftMotor.setTargetPosition(total_ticks);
-
-        frontRightMotor.setTargetPosition(total_ticks);
         backRightMotor.setTargetPosition(total_ticks);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         driveForward(power);
 
-        while(frontLeftMotor.isBusy() && frontRightMotor.isBusy() && backLeftMotor.isBusy() && backRightMotor.isBusy()) {
+        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
         }
 
         stopDriving();
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     void turnRight(double power, double degrees) {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         int ticks = (int) Math.round(TICKS_PER_DEGREE * degrees);
 
         //Turn to the right
-        frontLeftMotor.setTargetPosition(ticks);
         backLeftMotor.setTargetPosition(ticks);
-        frontRightMotor.setTargetPosition(ticks);
         backRightMotor.setTargetPosition(ticks);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //turn right
         leftPower(power);
         rightPower(-power);
-        while(frontLeftMotor.isBusy() && frontRightMotor.isBusy() && backLeftMotor.isBusy() && backRightMotor.isBusy()) {
+        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
         }
 
         stopDriving();
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     void turnLeft(double power, double degrees) {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         int ticks = (int) Math.round(TICKS_PER_DEGREE * degrees);
 
         //Turn to the right
-        frontLeftMotor.setTargetPosition(ticks);
-        backLeftMotor.setTargetPosition(ticks);
         frontRightMotor.setTargetPosition(ticks);
         backRightMotor.setTargetPosition(ticks);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //turn right
         leftPower(-power);
         rightPower(power);
 
-        while(frontLeftMotor.isBusy() && frontRightMotor.isBusy() && backLeftMotor.isBusy() && backRightMotor.isBusy()) {
+        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
         }
 
         stopDriving();
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -270,10 +231,7 @@ public class Autonomous extends LinearOpMode {
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
@@ -281,9 +239,9 @@ public class Autonomous extends LinearOpMode {
         waitForStart();
         runtime.reset();
         //drive 5 inches
-        driveDistance(1.0, 4, 5);
-        sleep(5000);
-        ratioCheck(300, 0.5);
+        //driveDistance(1.0, 4, 60);
+        //sleep(5000);
+        ratioCheck(2000, 0.5);
 
     }
 
