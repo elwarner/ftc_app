@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -59,15 +60,23 @@ public class Autonomous extends LinearOpMode {
     double TICKS_PER_DEGREE = 0;
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+
     DcMotor frontLeftMotor = null;
     DcMotor frontRightMotor = null;
     DcMotor backLeftMotor = null;
     DcMotor backRightMotor = null;
+
+    DcMotor armLeftMotor = null;
+    DcMotor armRightMotor = null;
+
+    Servo leftServo = null;
+    Servo rightServo = null;
+
     HumanControl humanControl = new HumanControl(gamepad1, gamepad2);
+
     DriveController driveController;
-
-
-
+    ArmController armController;
+    ClampController clampController;
 
     void ratioCheck(int test_ticks, double power) {
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -114,7 +123,17 @@ public class Autonomous extends LinearOpMode {
 
         backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+
+        armLeftMotor = hardwareMap.dcMotor.get("armLeftMotor");
+        armRightMotor = hardwareMap.dcMotor.get("armRightMotor");
+
+        leftServo = hardwareMap.servo.get("leftServo");
+        rightServo = hardwareMap.servo.get("rightServo");
+
+
         driveController = new DriveController(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor, humanControl);
+        armController = new ArmController(armLeftMotor, armRightMotor, humanControl);
+        clampController = new ClampController(leftServo, rightServo, humanControl);
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
@@ -136,6 +155,10 @@ public class Autonomous extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        //Clamp block
+        clampController.clampClamp();
+        //Move arm up
+        armController.moveArm();
         //drive 5 inches
         driveController.driveDistance(1.0, 4, 60);
         //sleep(5000);

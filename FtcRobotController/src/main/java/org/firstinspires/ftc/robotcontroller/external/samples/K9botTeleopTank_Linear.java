@@ -93,9 +93,9 @@ public class K9botTeleopTank_Linear extends LinearOpMode {
 
             // Use gamepad Y & A raise and lower the arm
             if (gamepad1.a)
-                armPosition += ARM_SPEED;
+                clawPosition = 0;
             else if (gamepad1.y)
-                armPosition -= ARM_SPEED;
+                clawPosition = 1;
 
             // Use gamepad X & B to open and close the claw
             if (gamepad1.x)
@@ -104,9 +104,7 @@ public class K9botTeleopTank_Linear extends LinearOpMode {
                 clawPosition -= CLAW_SPEED;
 
             // Move both servos to new position.
-            armPosition  = Range.clip(armPosition, robot.ARM_MIN_RANGE, robot.ARM_MAX_RANGE);
-            robot.arm.setPosition(armPosition);
-            clawPosition = Range.clip(clawPosition, robot.CLAW_MIN_RANGE, robot.CLAW_MAX_RANGE);
+
             robot.claw.setPosition(clawPosition);
 
             // Send telemetry message to signify robot running;
