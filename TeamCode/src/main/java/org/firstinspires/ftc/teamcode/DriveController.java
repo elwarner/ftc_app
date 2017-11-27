@@ -36,7 +36,18 @@ public class DriveController {
         this.backRightMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
-
+    void resetEncoders() {
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    void reset() {
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
     void driveForward(double power) {
         frontLeftMotor.setPower(power);
         frontRightMotor.setPower(power);
@@ -79,6 +90,7 @@ public class DriveController {
         driveForward(power);
 
         while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
+
 
         }
 
@@ -157,12 +169,37 @@ public class DriveController {
         rightPower(right);
 
     }
-
+    void tankDrive(double left, double right) {
+        leftPower(-left);
+        rightPower(right);
+    }
     void update() {
         arcadeDrive(humanControl.getDriverLeftJoyY(), humanControl.getDriverRightJoyX());
+        //arcadeDrive(humanControl.getDriverRightJoyX(), humanControl.getDriverLeftJoyY());
     }
-    void tankDrive(double left, double right) {
-        leftPower(left);
-        rightPower(right);
+    void turnAngle(double angle, double power) {
+        double encoderRatio = 1156/90;
+        int ticks = (int) (Math.round(encoderRatio*angle));
+
+
+        backLeftMotor.setTargetPosition(ticks);
+        backRightMotor.setTargetPosition(-ticks);
+
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //turn right
+        leftPower(power);
+        rightPower(power);
+
+        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
+
+        }
+
+        stopDriving();
+
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 }

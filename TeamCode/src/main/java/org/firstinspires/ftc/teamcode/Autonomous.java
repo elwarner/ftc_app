@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Forward&Backward", group="Routines")  // @Autonomous(...) is the other common choice
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="peterPurge", group="Routines")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class Autonomous extends LinearOpMode {
     int TICKS_PER_ROTATION = 1120;
@@ -78,19 +79,19 @@ public class Autonomous extends LinearOpMode {
     ArmController armController;
     ClampController clampController;
 
-    void ratioCheck(int test_ticks, double power) {
+    double ratioCheck(int test_ticks, double power) {
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         backLeftMotor.setTargetPosition(test_ticks);
-        backRightMotor.setTargetPosition(test_ticks);
+        backRightMotor.setTargetPosition(-test_ticks);
 
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //turn right
         driveController.leftPower(power);
-        driveController.rightPower(-power);
+        driveController.rightPower(power);
 
         while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
 
@@ -104,14 +105,16 @@ public class Autonomous extends LinearOpMode {
         //                |
 
         //Now measure angle it goes and store in variable
-        double angleTurned = /*lets say*/ 56.4;
+        double angleTurned = /*lets say*/ 108;
 
         double encoderAngleRatio = test_ticks/angleTurned; //e.g 5 ticks per degree
         TICKS_PER_DEGREE = encoderAngleRatio;
 
         telemetry.addData("EncoderAngleRatio", encoderAngleRatio);
-
+        return encoderAngleRatio;
     }
+
+
 
     @Override
     public void runOpMode() {
@@ -154,15 +157,30 @@ public class Autonomous extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        driveController.resetEncoders();
+
         runtime.reset();
         //Clamp block
         clampController.clampClamp();
         //Move arm up
-        armController.moveArm();
+        //armController.moveArm();
         //drive 5 inches
-        driveController.driveDistance(1.0, 4, 60);
+        //driveController.driveDistance(1, 4, 60);
         //sleep(5000);
-        ratioCheck(2000, 0.5);
+        driveController.turnAngle(-90, 0.5);
+        //telemetry.addData("angle", ratioCheck(1200, 0.5));
+
+        armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armController.moveArmToPosition(100);
+
+        while(opModeIsActive()) {
+            telemetry.addData("encoderCount", backLeftMotor.getCurrentPosition());
+            telemetry.addData("armEncoderCount", armController.getPosition());
+
+            telemetry.update();
+        }
+
+
 
     }
 

@@ -69,7 +69,7 @@ public class HumanControl {
     }
 
     public double getDriverLeftJoyY() {
-        return driverJoy.left_stick_y;
+        return -driverJoy.left_stick_y;
     }
     public double getDriverLeftJoyX() {
         return driverJoy.left_stick_x;
@@ -82,20 +82,20 @@ public class HumanControl {
     }
 
     public double getOperatorLeftJoyY() {
-        return driverJoy.left_stick_y;
+        return -operatorJoy.left_stick_y;
     }
     public double getOperatorLeftJoyX() {
-        return driverJoy.left_stick_x;
+        return operatorJoy.left_stick_x;
     }
     public double getOperatorRightJoyY() {
-        return driverJoy.right_stick_y;
+        return operatorJoy.right_stick_y;
     }
     public double getOperatorRightJoyX() {
-        return driverJoy.right_stick_x;
+        return operatorJoy.right_stick_x;
     }
 
     public boolean isArmUpDesired() {
-        if(operatorLeftJoyY > 0) {
+        if(getOperatorLeftJoyY() > 0) {
             return true;
         } else {
             return false;
@@ -103,7 +103,7 @@ public class HumanControl {
     }
 
     public boolean isArmDownDesired() {
-        if(operatorLeftJoyY < 0) {
+        if(getOperatorLeftJoyY() < 0) {
             return true;
         } else {
             return false;

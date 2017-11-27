@@ -54,8 +54,8 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Sample Iterative OpMode", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-@Disabled
+@TeleOp(name="Teleop", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+//@Disabled
 public class Teleop extends OpMode
 {
     /* Declare OpMode members. */
@@ -128,6 +128,10 @@ public class Teleop extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        driveController.reset();
+        //armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //armController.moveArmToPosition(500);
+
     }
 
     /*
@@ -138,9 +142,25 @@ public class Teleop extends OpMode
         driveController.update();
         armController.update();
         clampController.update();
+        telemetry.addData("arm encoder value", armLeftMotor.getCurrentPosition());
         // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
         // leftMotor.setPower(-gamepad1.left_stick_y);
         // rightMotor.setPower(-gamepad1.right_stick_y);
+
+        telemetry.addData("gamepad_driver_left_y", humanControl.getDriverLeftJoyY());
+        telemetry.addData("gamepad_driver_left_x", humanControl.getDriverLeftJoyX());
+
+        telemetry.addData("gamepad_operator_left_y", humanControl.getOperatorLeftJoyY());
+        telemetry.addData("gamepad_operator_left_x", humanControl.getOperatorLeftJoyX());
+
+        telemetry.addData("gamepad_right_y", gamepad1.right_stick_y);
+        telemetry.addData("gamepad_right_x", gamepad1.right_stick_x);
+
+
+        telemetry.addData("armLeftMotor: ", armController.getPosition());
+        telemetry.update();
+
+
     }
 
     /*
