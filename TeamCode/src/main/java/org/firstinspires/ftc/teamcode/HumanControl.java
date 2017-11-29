@@ -26,7 +26,7 @@ public class HumanControl {
     private double driverLeftJoyX, driverLeftJoyY, driverRightJoyX, driverRightJoyY;
     private double operatorLeftJoyX, operatorLeftJoyY, operatorRightJoyX, operatorRightJoyY;
 
-    boolean clampOpenDesired, clampClosedDesired, armDownDesired, armUpDesired;
+    boolean clampOpenDesired, clampClosedDesired, armDownDesired, armUpDesired, clampMiddleDesired;
 
 
 
@@ -49,6 +49,7 @@ public class HumanControl {
         clampOpenDesired = false;
         armDownDesired = false;
         armUpDesired = false;
+        clampMiddleDesired = false;
     }
 
     public void update() {
@@ -66,6 +67,7 @@ public class HumanControl {
         clampOpenDesired = isClampOpenDesired();
         armUpDesired = isArmUpDesired();
         armDownDesired = isArmDownDesired();
+        clampMiddleDesired = isClampMiddleDesired();
     }
 
     public double getDriverLeftJoyY() {
@@ -111,14 +113,22 @@ public class HumanControl {
     }
 
     public boolean isClampOpenDesired() {
-        if(operatorJoy.y) {
+        if(operatorJoy.a) {
             return true;
         } else {
             return false;
         }
     }
     public boolean isClampClosedDesired() {
-        if(operatorJoy.a) {
+        if(operatorJoy.y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isClampMiddleDesired() {
+        if(operatorJoy.x) {
             return true;
         } else {
             return false;

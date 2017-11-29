@@ -19,9 +19,9 @@ public class ArmController {
         this.humanControl = humanControl;
     }
     //moves at constant power no matter what joystick value;
-    public void moveArmUp() {
-        armLeftMotor.setPower(-0.2);
-        armRightMotor.setPower(-0.2);
+    public void moveArmUp(double power) {
+        armLeftMotor.setPower(-power);
+        armRightMotor.setPower(-power);
 
     }
     public void moveArmDown() {
@@ -42,13 +42,13 @@ public class ArmController {
         armLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        armLeftMotor.setTargetPosition(ticks);
-        armRightMotor.setTargetPosition(ticks);
+        armLeftMotor.setTargetPosition(-ticks);
+        armRightMotor.setTargetPosition(-ticks);
 
         armLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        moveArmUp();
+        moveArmUp(0.1);
 
         while(armLeftMotor.isBusy() && armRightMotor.isBusy()) {
 
@@ -67,7 +67,7 @@ public class ArmController {
         armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if(humanControl.isArmUpDesired()) {
-            moveArmUp();
+            moveArmUp(0.2);
         } else if(humanControl.isArmDownDesired()) {
             moveArmDown();
         } else {

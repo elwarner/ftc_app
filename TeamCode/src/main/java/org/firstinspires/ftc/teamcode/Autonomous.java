@@ -151,13 +151,14 @@ public class Autonomous extends LinearOpMode {
 
 
 
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        driveController.resetEncoders();
+
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         runtime.reset();
         //Clamp block
@@ -167,14 +168,17 @@ public class Autonomous extends LinearOpMode {
         //drive 5 inches
         //driveController.driveDistance(1, 4, 60);
         //sleep(5000);
-        driveController.turnAngle(-90, 0.5);
+        //driveController.turnAngle(-90, 0.5);
         //telemetry.addData("angle", ratioCheck(1200, 0.5));
-
+        //driveController.turnLeft(1, 90);
+        driveController.driveDistance(1, 4, 60);
         armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armController.moveArmToPosition(100);
+        //armController.moveArmToPosition(10);
 
         while(opModeIsActive()) {
-            telemetry.addData("encoderCount", backLeftMotor.getCurrentPosition());
+            telemetry.addData("leftencoderCount", backLeftMotor.getCurrentPosition());
+            telemetry.addData("rightencoderCount", backRightMotor.getCurrentPosition());
+
             telemetry.addData("armEncoderCount", armController.getPosition());
 
             telemetry.update();

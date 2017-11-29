@@ -17,7 +17,8 @@ public class DriveController {
     private DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
     private HumanControl humanControl;
     int TICKS_PER_ROTATION = 1120;
-    int TICKS_PER_DEGREE = 0;
+    double TICKS_PER_DEGREE = (928/90) * .85;
+    //int RIGHT_TICKS_PER_DEGREE = 769/90;
 
 
     public DriveController(DcMotor frontLeftMotor, DcMotor backLeftMotor, DcMotor frontRightMotor, DcMotor backRightMotor, HumanControl humanControl) {
@@ -37,8 +38,8 @@ public class DriveController {
     }
 
     void resetEncoders() {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
@@ -95,6 +96,8 @@ public class DriveController {
         }
 
         stopDriving();
+        resetEncoders();
+
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -107,7 +110,7 @@ public class DriveController {
 
         //Turn to the right
         backLeftMotor.setTargetPosition(ticks);
-        backRightMotor.setTargetPosition(ticks);
+        backRightMotor.setTargetPosition(-ticks);
 
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -120,6 +123,8 @@ public class DriveController {
         }
 
         stopDriving();
+        resetEncoders();
+
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -129,14 +134,14 @@ public class DriveController {
 
         int ticks = (int) Math.round(TICKS_PER_DEGREE * degrees);
 
-        //Turn to the right
-        frontRightMotor.setTargetPosition(ticks);
+        //Turn to the left
+        frontLeftMotor.setTargetPosition(-ticks);
         backRightMotor.setTargetPosition(ticks);
 
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //turn right
+        //turn left
         leftPower(-power);
         rightPower(power);
 
@@ -145,6 +150,8 @@ public class DriveController {
         }
 
         stopDriving();
+        resetEncoders();
+
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -177,29 +184,5 @@ public class DriveController {
         arcadeDrive(humanControl.getDriverLeftJoyY(), humanControl.getDriverRightJoyX());
         //arcadeDrive(humanControl.getDriverRightJoyX(), humanControl.getDriverLeftJoyY());
     }
-    void turnAngle(double angle, double power) {
-        double encoderRatio = 1156/90;
-        int ticks = (int) (Math.round(encoderRatio*angle));
 
-
-        backLeftMotor.setTargetPosition(ticks);
-        backRightMotor.setTargetPosition(-ticks);
-
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //turn right
-        leftPower(power);
-        rightPower(power);
-
-        while(backLeftMotor.isBusy() && backRightMotor.isBusy()) {
-
-        }
-
-        stopDriving();
-
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
 }

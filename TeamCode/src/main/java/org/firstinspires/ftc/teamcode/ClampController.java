@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ClampController {
     private HumanControl humanControl;
     private Servo leftServo, rightServo;
-    double OPEN_POSITION_LEFT, CLAMPED_POSITION_LEFT, OPEN_POSITION_RIGHT, CLAMPED_POSITION_RIGHT;
+    double OPEN_POSITION_LEFT, CLAMPED_POSITION_LEFT, OPEN_POSITION_RIGHT, CLAMPED_POSITION_RIGHT, MIDDLE_POSITION_LEFT, MIDDLE_POSITION_RIGHT;
 
     //leftServo port 1 rightServo 0 Hub Top 10
 
@@ -19,11 +19,13 @@ public class ClampController {
         this.rightServo = rightServo;
         this.humanControl = humanControl;
 
-        OPEN_POSITION_LEFT = 0.5;
+        OPEN_POSITION_RIGHT = 0;
+        MIDDLE_POSITION_LEFT = .6;
         CLAMPED_POSITION_LEFT = 1;
 
-        OPEN_POSITION_RIGHT = 1;
-        CLAMPED_POSITION_RIGHT = 0.5;
+        MIDDLE_POSITION_RIGHT = 1.0 - MIDDLE_POSITION_LEFT;
+        OPEN_POSITION_RIGHT = 1.0 - OPEN_POSITION_LEFT;
+        CLAMPED_POSITION_RIGHT = 1.0 - CLAMPED_POSITION_LEFT;
     }
 
     public void openClamp() {
@@ -34,6 +36,11 @@ public class ClampController {
     public void clampClamp() {
         leftServo.setPosition(CLAMPED_POSITION_LEFT);
         rightServo.setPosition(CLAMPED_POSITION_RIGHT);
+    }
+
+    public void middleClamp() {
+        leftServo.setPosition(MIDDLE_POSITION_LEFT);
+        rightServo.setPosition(MIDDLE_POSITION_RIGHT);
     }
 
     public double getLeftPosition() {
